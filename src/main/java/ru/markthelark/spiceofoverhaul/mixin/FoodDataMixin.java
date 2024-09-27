@@ -3,7 +3,6 @@ package ru.markthelark.spiceofoverhaul.mixin;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
-import net.minecraftforge.common.extensions.IForgeItem;
 import ru.markthelark.spiceofoverhaul.Config;
 import ru.markthelark.spiceofoverhaul.util.FoodHashAccessor;
 import net.minecraft.nbt.CompoundTag;
@@ -22,23 +21,23 @@ import java.util.*;
 
 @Mixin(FoodData.class)
 public abstract class FoodDataMixin implements FoodHashAccessor {
-    @Shadow int lastFoodLevel;
-    @Shadow int foodLevel;
-    @Shadow float exhaustionLevel;
-    @Shadow float saturationLevel;
-    @Shadow int tickTimer;
+    @Shadow private int lastFoodLevel;
+    @Shadow private int foodLevel;
+    @Shadow private float exhaustionLevel;
+    @Shadow private float saturationLevel;
+    @Shadow private int tickTimer;
 
-    public final int historyLength = 20;
-    private LinkedList<String> foodQueue = new LinkedList<>();
-    public HashMap<String,Integer> foodHash = new HashMap<>();
-    public HashMap<String,Integer> getFoodHash(){
+    @Unique public final int historyLength = Config.historyLength;
+    @Unique private LinkedList<String> foodQueue = new LinkedList<>();
+    @Unique public HashMap<String,Integer> foodHash = new HashMap<>();
+    @Unique public HashMap<String,Integer> getFoodHash(){
         return this.foodHash;
     }
-    public LinkedList<String> getFoodQueue(){
+    @Unique public LinkedList<String> getFoodQueue(){
         return this.foodQueue;
     }
-    public int getFoodHistory(){return this.historyLength;}
-    public String getFoodQueueString(){
+    @Unique public int getFoodHistory(){return this.historyLength;}
+    @Unique public String getFoodQueueString(){
         String saveFoodQueue = this.foodQueue.toString().replace(" ", "");
         saveFoodQueue = saveFoodQueue.replace("[", "");
         saveFoodQueue = saveFoodQueue.replace("]", "");
