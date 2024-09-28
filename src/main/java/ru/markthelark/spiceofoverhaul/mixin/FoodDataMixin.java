@@ -135,7 +135,7 @@ public abstract class FoodDataMixin implements FoodHashAccessor {
             MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation("spiceofoverhaul", "wellfed"));
             float wellFedModifier = 1f;
             if (p_38711_.hasEffect(effect)){
-                wellFedModifier = 0.75f;
+                wellFedModifier = 0.66f;
             }
             float difficultyModifier = 1f;
             if (difficulty == Difficulty.HARD){
