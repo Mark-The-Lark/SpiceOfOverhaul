@@ -135,7 +135,7 @@ public abstract class FoodDataMixin implements FoodHashAccessor {
             MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation("spiceofoverhaul", "wellfed"));
             float wellFedModifier = 1f;
             if (p_38711_.hasEffect(effect)){
-                wellFedModifier = 0.25f;
+                wellFedModifier = 0.75f;
             }
             float difficultyModifier = 1f;
             if (difficulty == Difficulty.HARD){
@@ -144,16 +144,17 @@ public abstract class FoodDataMixin implements FoodHashAccessor {
             else if (difficulty.getId() <= 1){
                 difficultyModifier *= 0.75f;
             }
-            float modifier = 20/this.foodLevel;
-            modifier *= Math.min(p_38711_.getHealth(), 5f)/p_38711_.getMaxHealth();
+            float modifier = 20/Math.max(this.foodLevel, 10);
+            modifier *= p_38711_.getMaxHealth()/Math.max(p_38711_.getHealth(), 10f);
             //lowHealthModifier *= Config.lowHealthRegenRateModifier / 100F;
             modifier *= difficultyModifier;
             modifier *= wellFedModifier;
+            modifier = Math.min(modifier, 4f);
 
             boolean flag = p_38711_.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
             if (flag && this.foodLevel >= 7 && p_38711_.isHurt()) {
                 ++this.tickTimer;
-                if (this.tickTimer >= Math.round(80.0F * modifier)) {
+                if (this.tickTimer >= Math.round(60.0F * modifier)) {
                     p_38711_.heal(1.0F);
                     this.foodLevel = Math.max(this.foodLevel - 1, 0);
                     this.tickTimer = 0;
