@@ -3,6 +3,7 @@
   "package":"ru.markthelark.spiceofoverhaul.mixin",
   "compatibilitylevel":"JAVA_21",
   "mixins": [
+    "EntityMixin",
     "FoodDataMixin",
     "LivingEntityMixin",
     "FoodHelperMixin",

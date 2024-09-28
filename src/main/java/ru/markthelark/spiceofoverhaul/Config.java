@@ -25,8 +25,12 @@ public class Config
     private static final ForgeConfigSpec.ConfigValue<Double> IDLE_EXHAUSTION_QUANTITY = BUILDER
             .comment("The number which will be added to exhaustion each tick")
             .defineInRange("idleExhaustionQuantity", 0.01f, 0.0f, 4.0f);
+
+    private static final ForgeConfigSpec.ConfigValue<Boolean> MODIFY_FOOD_EATING_SPEED = BUILDER
+            .comment("If eating speed affected by food values")
+            .define("modifyFoodEatingSpeed", true);
     private static final ForgeConfigSpec.ConfigValue<Boolean> GUI_TEXT = BUILDER
-            .comment("adds text to GUI describing health and hunger status !HAVE A LOT OF PROBLEMS IMPLEMENTING THIS, WRITE ME ON GITHUB IF YOU KNOW HOW TO DEAL WITH MINECRAFT GUI!")
+            .comment("adds text to GUI describing health and hunger status")
             .define("addGuiText", true);
     private static final ForgeConfigSpec.ConfigValue<Boolean> LOW_HEALTH_STRIKES = BUILDER
             .comment("Strikes for having low hp")
@@ -45,7 +49,7 @@ public class Config
             .define("highSaturationStrikes", true);
     private static final ForgeConfigSpec.ConfigValue<Double> SATURATION_LEVEL = BUILDER
             .comment("Strikes for having high saturation start at this saturation level")
-            .defineInRange("saturationLevel", 5f, 0f, 10f);
+            .defineInRange("saturationLevel", 15f, 0f, 20f);
     private static final ForgeConfigSpec.ConfigValue<Boolean> STRIKES_JUMP = BUILDER
             .comment("You cannot jump when having extreme strikes")
             .define("strikesJump", true);
@@ -59,6 +63,9 @@ public class Config
     private static final ForgeConfigSpec.ConfigValue<Boolean> REGEN_REWORK = BUILDER
             .comment("Regeneration only requires hunger, not saturation")
             .define("regenRework", true);
+    private static final ForgeConfigSpec.ConfigValue<Boolean> ENABLE_WELLFED = BUILDER
+            .comment("Enable effect which increases regeneration rate")
+            .define("enableWellFed", true);
     private static final ForgeConfigSpec.ConfigValue<Boolean> CAKE_EATABLE_ANYWAY = BUILDER
             .comment("Makes cake eatable even if it does not give any hunger")
             .define("cakeEatableAnyway", false);
@@ -67,6 +74,7 @@ public class Config
 
     public static boolean enableSOLModule;
     public static boolean idleExhaustion;
+    public static boolean modifyFoodEatingSpeed;
     public static float idleExhaustionQuantity;
     public static boolean addGuiText;
     public static boolean lowHealthStrikes;
@@ -77,6 +85,7 @@ public class Config
     public static float saturationLevel;
     public static boolean strikesJump;
     public static boolean regenRework;
+    public static boolean enableWellFed;
     public static boolean cakeEatableAnyway;
     public static int historyLength;
     public static int strikesDifficultyBase;
@@ -97,6 +106,7 @@ public class Config
         idleExhaustion = IDLE_EXHAUSTION.get();
         idleExhaustionQuantity = IDLE_EXHAUSTION_QUANTITY.get().floatValue();
 
+        modifyFoodEatingSpeed = MODIFY_FOOD_EATING_SPEED.get();
         addGuiText =GUI_TEXT.get();
 
         lowHungerStrikes =LOW_HUNGER_STRIKES.get();
@@ -111,6 +121,7 @@ public class Config
         StrikesDifficultyScale = STRIKES_DIFFICULTY_SCALE.get();
 
         regenRework = REGEN_REWORK.get();
+        enableWellFed = ENABLE_WELLFED.get();
         cakeEatableAnyway = CAKE_EATABLE_ANYWAY.get();
 
     }

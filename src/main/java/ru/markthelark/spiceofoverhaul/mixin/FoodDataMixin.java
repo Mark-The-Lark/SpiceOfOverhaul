@@ -1,8 +1,12 @@
 package ru.markthelark.spiceofoverhaul.mixin;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
+import net.minecraftforge.registries.ForgeRegistries;
 import ru.markthelark.spiceofoverhaul.Config;
 import ru.markthelark.spiceofoverhaul.util.FoodHashAccessor;
 import net.minecraft.nbt.CompoundTag;
@@ -61,6 +65,20 @@ public abstract class FoodDataMixin implements FoodHashAccessor {
                 }
                 this.foodHash.put(itemString, this.foodHash.get(itemString) + 1);
                 this.foodQueue.add(itemString);
+                if (Config.enableWellFed) {
+                    MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation("spiceofoverhaul", "wellfed"));
+                    int duration = 0;
+                    if ((int) (foodproperties.getNutrition() * Math.pow(0.7, eaten)) >= 4) {
+                        duration = 40 * 20;
+                    } else if ((int) (foodproperties.getNutrition() * Math.pow(0.7, eaten)) >= 7) {
+                        duration = 120 * 20;
+                    } else if ((int) (foodproperties.getNutrition() * Math.pow(0.7, eaten)) >= 10) {
+                        duration = 240 * 20;
+                    } else if ((int) (foodproperties.getNutrition() * Math.pow(0.7, eaten)) >= 14) {
+                        duration = 480 * 20;
+                    }
+                    if (duration>0){entity.addEffect(new MobEffectInstance(effect, duration, 0));}
+                }
             }
         }
         else {
@@ -114,19 +132,35 @@ public abstract class FoodDataMixin implements FoodHashAccessor {
                     this.foodLevel = Math.max(this.foodLevel - 1, 0);
                 }
             }
-
+            MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation("spiceofoverhaul", "wellfed"));
+            float wellFedModifier = 1f;
+            if (p_38711_.hasEffect(effect)){
+                wellFedModifier = 0.25f;
+            }
+            float difficultyModifier = 1f;
+            if (difficulty == Difficulty.HARD){
+                difficultyModifier *= 1.5f;
+            }
+            else if (difficulty.getId() <= 1){
+                difficultyModifier *= 0.75f;
+            }
+            float modifier = 20/this.foodLevel;
+            modifier *= Math.min(p_38711_.getHealth(), 5f)/p_38711_.getMaxHealth();
+            //lowHealthModifier *= Config.lowHealthRegenRateModifier / 100F;
+            modifier *= difficultyModifier;
+            modifier *= wellFedModifier;
 
             boolean flag = p_38711_.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
             if (flag && this.foodLevel >= 7 && p_38711_.isHurt()) {
                 ++this.tickTimer;
-                if (this.tickTimer >= 40) {
+                if (this.tickTimer >= Math.round(80.0F * modifier)) {
                     p_38711_.heal(1.0F);
                     this.foodLevel = Math.max(this.foodLevel - 1, 0);
                     this.tickTimer = 0;
                 }
             } else if (this.foodLevel <= 0) {
                 ++this.tickTimer;
-                if (this.tickTimer >= 20) {
+                if (this.tickTimer >= 40) {
                     p_38711_.hurt(p_38711_.damageSources().starve(), 1.0F);
                     this.tickTimer = 0;
                 }
