@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package":"ru.markthelark.spiceofoverhaul.mixin",
+  "compatibilitylevel":"JAVA_21",
+  "mixins": [
+    "EntityMixin",
+    "FoodDataMixin",
+    "LivingEntityMixin",
+    "FoodHelperMixin",
+    "CakeBlockMixin",
+    "PlayerMixin"
+  ],
+  "injectors":{
+    "defaultRequire": 1
+  },
+  "refmap": "spiceofoverhaul.mixin-refmap.json",
+  "minVersion": "0.8"
+}
