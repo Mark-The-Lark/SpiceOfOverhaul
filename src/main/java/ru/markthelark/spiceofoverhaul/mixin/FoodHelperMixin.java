@@ -24,8 +24,8 @@ import static squeek.appleskin.helpers.FoodHelper.isFood;
 
 @Mixin(FoodHelper.class)
 public class FoodHelperMixin {
-    @Inject(method = "getDefaultFoodValues(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;)Lsqueek/appleskin/api/food/FoodValues;", at = @At(value = "HEAD"), remap = false, cancellable = true)
-    private static void getDefaultFoodValues(ItemStack itemStack, Player player, CallbackInfoReturnable<FoodValues> info) {
+    @Inject(method = "getModifiedFoodValues(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;)Lsqueek/appleskin/api/food/FoodValues;", at = @At(value = "HEAD"), remap = false, cancellable = true)
+    private static void getModifiedFoodValues(ItemStack itemStack, Player player, CallbackInfoReturnable<FoodValues> info) {
         FoodData foodData = player.getFoodData();
         int eaten = 0;
         if (foodData instanceof FoodHashAccessor) {
