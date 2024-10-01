@@ -8,9 +8,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import ru.markthelark.spiceofoverhaul.SpiceOfOverhaul;
 import ru.markthelark.spiceofoverhaul.util.FoodHashAccessor;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.food.FoodData;
 
 
 public record MessageQueueSync(String foodqueue) implements CustomPacketPayload

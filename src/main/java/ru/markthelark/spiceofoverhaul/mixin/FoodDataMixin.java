@@ -1,20 +1,16 @@
 package ru.markthelark.spiceofoverhaul.mixin;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import ru.markthelark.spiceofoverhaul.Config;
 import ru.markthelark.spiceofoverhaul.SpiceOfOverhaul;
 import ru.markthelark.spiceofoverhaul.util.FoodHashAccessor;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;

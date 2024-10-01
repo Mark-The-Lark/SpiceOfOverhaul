@@ -1,7 +1,6 @@
 package ru.markthelark.spiceofoverhaul;
 
 
-import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
@@ -12,12 +11,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import ru.markthelark.spiceofoverhaul.effect.WellFedEffect;
 import ru.markthelark.spiceofoverhaul.items.FoodBag;
@@ -37,12 +33,13 @@ public class SpiceOfOverhaul
     public static final DeferredHolder<MobEffect, MobEffect> WELLFED = EFFECTS.register("wellfed", WellFedEffect::new);
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, MODID);
-    public static final Supplier<Item> FOODBAG = ITEMS.register("lunch_box", () -> new FoodBag(new Item.Properties().stacksTo(1).component(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY)));
-    public static final Supplier<Item> PAPERBAG = ITEMS.register("paper_bag", () -> new FoodBag(new Item.Properties().stacksTo(1).component(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY)));
+    public static final Supplier<Item> LUNCH_BOX = ITEMS.register("lunch_box", () -> new FoodBag(new Item.Properties().stacksTo(1).component(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY)));
+    public static final Supplier<Item> PAPER_BAG = ITEMS.register("paper_bag", () -> new FoodBag(new Item.Properties().stacksTo(1).component(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY)));
 
 
     public SpiceOfOverhaul(IEventBus modEventBus, ModContainer modContainer)
     {
+
         modEventBus.addListener(this::onRegisterPayloadHandler);
         NeoForge.EVENT_BUS.register(FoodEventHandler.class);
         if (ModList.get().isLoaded("appleskin")) {

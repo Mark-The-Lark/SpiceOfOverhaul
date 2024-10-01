@@ -1,0 +1,18 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"PGP",
+		"PPP"
+	],
+	"key": {
+		"P": {
+			"tag": "minecraft:planks"
+		},
+		"G": {
+			"item": "minecraft:gold_ingot"
+		}
+	},
+	"result": {
+		"id": "spiceofoverhaul:lunch_box"
+	}
+}

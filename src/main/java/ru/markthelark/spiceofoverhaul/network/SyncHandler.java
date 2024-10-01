@@ -9,7 +9,6 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import ru.markthelark.spiceofoverhaul.SpiceOfOverhaul;
 import ru.markthelark.spiceofoverhaul.util.FoodHashAccessor;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 
