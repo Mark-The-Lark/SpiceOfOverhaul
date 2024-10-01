@@ -2,8 +2,11 @@ package ru.markthelark.spiceofoverhaul;
 
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.BundleContents;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -14,11 +17,15 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import ru.markthelark.spiceofoverhaul.effect.WellFedEffect;
+import ru.markthelark.spiceofoverhaul.items.FoodBag;
 import ru.markthelark.spiceofoverhaul.network.SyncHandler;
 import ru.markthelark.spiceofoverhaul.util.AppleSkinEvent;
 import ru.markthelark.spiceofoverhaul.util.FoodEventHandler;
+
+import java.util.function.Supplier;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(SpiceOfOverhaul.MODID)
@@ -29,25 +36,30 @@ public class SpiceOfOverhaul
     public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, MODID);
     public static final DeferredHolder<MobEffect, MobEffect> WELLFED = EFFECTS.register("wellfed", WellFedEffect::new);
 
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, MODID);
+    public static final Supplier<Item> FOODBAG = ITEMS.register("lunch_box", () -> new FoodBag(new Item.Properties().stacksTo(1).component(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY)));
+    public static final Supplier<Item> PAPERBAG = ITEMS.register("paper_bag", () -> new FoodBag(new Item.Properties().stacksTo(1).component(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY)));
+
 
     public SpiceOfOverhaul(IEventBus modEventBus, ModContainer modContainer)
     {
-        //NeoForge.EVENT_BUS.addListener(this::onRegisterPayloadHandler);
+        modEventBus.addListener(this::onRegisterPayloadHandler);
         NeoForge.EVENT_BUS.register(FoodEventHandler.class);
         if (ModList.get().isLoaded("appleskin")) {
             NeoForge.EVENT_BUS.register(AppleSkinEvent.class);
         }
 //        NeoForge.EVENT_BUS.register(this);
             EFFECTS.register(modEventBus);
+            ITEMS.register(modEventBus);
         modContainer.registerConfig(
-                ModConfig.Type.COMMON,
+                net.neoforged.fml.config.ModConfig.Type.COMMON,
                 Config.SPEC
         );
     }
 
-//    @SubscribeEvent
-//    private void onRegisterPayloadHandler(final RegisterPayloadHandlersEvent event)
-//    {
-//        SyncHandler.register(event);
-//    }
+    @SubscribeEvent
+    private void onRegisterPayloadHandler(final RegisterPayloadHandlersEvent event)
+    {
+        SyncHandler.register(event);
+    }
 }

@@ -52,7 +52,7 @@ public abstract class FoodDataMixin implements FoodHashAccessor {
     @Shadow public abstract void eat(int p_38708_, float p_38709_);
     public void eat(ItemStack itemStack, FoodProperties properties, Player player){
         if (Config.enableSOLModule) {
-                String itemString = (itemStack.getItem().getCreatorModId(itemStack) + ":" + itemStack.getItem().toString().replace(" ", ""));
+                String itemString = itemStack.getItem().toString().replace(" ", "");
                 if (!this.foodQueue.contains(itemString)) {
                     this.foodHash.put(itemString, 0);
                 }

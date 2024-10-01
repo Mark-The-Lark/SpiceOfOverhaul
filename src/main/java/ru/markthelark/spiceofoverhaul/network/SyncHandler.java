@@ -37,7 +37,7 @@ public class SyncHandler
         ServerPlayer player = (ServerPlayer) event.getEntity();
         FoodData foodData = player.getFoodData();
         if (foodData instanceof FoodHashAccessor){
-            var msg = new MessageQueueSync(((FoodHashAccessor) foodData).getFoodQueueString());
+            var msg = new MessageQueueSync(((FoodHashAccessor)(foodData)).getFoodQueueString());
             PacketDistributor.sendToPlayer(player, msg);
         }
     }

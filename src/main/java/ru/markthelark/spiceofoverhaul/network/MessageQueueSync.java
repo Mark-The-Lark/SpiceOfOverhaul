@@ -13,12 +13,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 
 
-public record MessageQueueSync(String foodQueue) implements CustomPacketPayload
+public record MessageQueueSync(String foodqueue) implements CustomPacketPayload
 {
-    public static final Type<MessageQueueSync> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(SpiceOfOverhaul.MODID, "foodQueue"));
+    public static final Type<MessageQueueSync> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(SpiceOfOverhaul.MODID, "foodqueue"));
     public static final StreamCodec<RegistryFriendlyByteBuf, MessageQueueSync> CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8,
-            MessageQueueSync::foodQueue,
+            MessageQueueSync::foodqueue,
             MessageQueueSync::new
     );
 
@@ -31,8 +31,9 @@ public record MessageQueueSync(String foodQueue) implements CustomPacketPayload
 
     public static void handle(final MessageQueueSync message, final IPayloadContext ctx)
     {
+        System.out.println(message.foodqueue);
         ctx.enqueueWork(() -> {
-            ((FoodHashAccessor)ctx.player().getFoodData()).setFoodQueue(message.foodQueue);
+            ((FoodHashAccessor)(ctx.player().getFoodData())).setFoodQueue(message.foodqueue());
         });
     }
 }
