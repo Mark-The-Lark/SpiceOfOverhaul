@@ -1,20 +1,36 @@
 package ru.markthelark.spiceofoverhaul.util;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import ru.markthelark.spiceofoverhaul.Config;
 
+import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 public class FormulaProvider {
-    public String expression;
-//    public final void FormulaProvider(){
-//        this.expression = Config.magicExpression.replaceAll("(\\w+)(\\^)(\\w+)", "Math.pow($1,$2");;
-//    }
-    public final int formula(int hunger, float saturation, int eaten) throws ScriptException {
-        ScriptEngineManager mgr = new ScriptEngineManager();
-        ScriptEngine engine = mgr.getEngineByName("JavaScript");
-        engine.put("H", hunger);
-        engine.put("E", eaten);
-        engine.put("S", saturation);
-        return (int)engine.eval(this.expression);
+    public static final int FormulaHunger(int hunger, float saturation, int eaten){
+        ScriptEngineFactory mgr = new NashornScriptEngineFactory();
+        ScriptEngine engine = mgr.getScriptEngine();
+        engine.put("HUNGER", hunger);
+        engine.put("EATEN", eaten);
+        engine.put("SATURATION", saturation);
+        try {
+            return Math.round(((Number)(engine.eval(Config.hungerExpression))).floatValue());
+        } catch (ScriptException e) {
+            return hunger;
+        }
+
+    }
+    public static final float FormulaSaturation(int hunger, float saturation, int eaten){
+        ScriptEngineFactory mgr = new NashornScriptEngineFactory();
+        ScriptEngine engine = mgr.getScriptEngine();
+        engine.put("HUNGER", hunger);
+        engine.put("EATEN", eaten);
+        engine.put("SATURATION", saturation);
+        try {
+            return ((Number)(engine.eval(Config.saturationExpression))).floatValue();
+        } catch (ScriptException e) {
+            return saturation;
+        }
+
     }
 }

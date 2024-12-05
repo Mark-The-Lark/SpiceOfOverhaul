@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraftforge.registries.ForgeRegistries;
 import ru.markthelark.spiceofoverhaul.Config;
+import ru.markthelark.spiceofoverhaul.SpiceOfOverhaul;
 import ru.markthelark.spiceofoverhaul.util.FoodHashAccessor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import ru.markthelark.spiceofoverhaul.util.FormulaProvider;
 
 import java.util.*;
 
@@ -58,7 +60,8 @@ public abstract class FoodDataMixin implements FoodHashAccessor {
                     this.foodHash.put(itemString, 0);
                 }
                 int eaten = this.foodHash.get(itemString);
-                this.eat((int) (foodproperties.getNutrition() * Math.pow(0.7, eaten)), foodproperties.getSaturationModifier());
+                this.eat(FormulaProvider.FormulaHunger(foodproperties.getNutrition(), foodproperties.getSaturationModifier(), eaten),
+                        FormulaProvider.FormulaSaturation(foodproperties.getNutrition(), foodproperties.getSaturationModifier(), eaten));
                 if (this.foodQueue.size() >= this.historyLength) {
                     String elem = this.foodQueue.pollFirst();
                     this.foodHash.put(elem, this.foodHash.get(elem) - 1);
@@ -66,18 +69,19 @@ public abstract class FoodDataMixin implements FoodHashAccessor {
                 this.foodHash.put(itemString, this.foodHash.get(itemString) + 1);
                 this.foodQueue.add(itemString);
                 if (Config.enableWellFed) {
-                    MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation("spiceofoverhaul", "wellfed"));
                     int duration = 0;
-                    if ((int) (foodproperties.getNutrition() * Math.pow(0.7, eaten)) >= 4) {
-                        duration = 40 * 20;
-                    } else if ((int) (foodproperties.getNutrition() * Math.pow(0.7, eaten)) >= 7) {
-                        duration = 120 * 20;
+                    if ((int) (foodproperties.getNutrition() * Math.pow(0.7, eaten)) >= 14) {
+                        duration = 480 * 20;
                     } else if ((int) (foodproperties.getNutrition() * Math.pow(0.7, eaten)) >= 10) {
                         duration = 240 * 20;
-                    } else if ((int) (foodproperties.getNutrition() * Math.pow(0.7, eaten)) >= 14) {
-                        duration = 480 * 20;
+                    } else if ((int) (foodproperties.getNutrition() * Math.pow(0.7, eaten)) >= 7) {
+                        duration = 120 * 20;
+                    } else if ((int) (foodproperties.getNutrition() * Math.pow(0.7, eaten)) >= 4) {
+                        duration = 40 * 20;
                     }
-                    if (duration>0){entity.addEffect(new MobEffectInstance(effect, duration, 0));}
+                    if (duration > 0) {
+                        entity.addEffect(new MobEffectInstance(SpiceOfOverhaul.WELLFED.get(), duration, 0));
+                    }
                 }
             }
         }
@@ -85,6 +89,21 @@ public abstract class FoodDataMixin implements FoodHashAccessor {
             if (item.isEdible()) {
                 FoodProperties foodproperties = itemStack.getFoodProperties(entity);
                 this.eat(foodproperties.getNutrition(), foodproperties.getSaturationModifier());
+                if (Config.enableWellFed) {
+                    int duration = 0;
+                    if (foodproperties.getNutrition() >= 14) {
+                        duration = 480 * 20;
+                    } else if (foodproperties.getNutrition() >= 10) {
+                        duration = 240 * 20;
+                    } else if (foodproperties.getNutrition() >= 7) {
+                        duration = 120 * 20;
+                    } else if (foodproperties.getNutrition() >= 4) {
+                        duration = 40 * 20;
+                    }
+                    if (duration > 0) {
+                        entity.addEffect(new MobEffectInstance(SpiceOfOverhaul.WELLFED.get(), duration, 0));
+                    }
+                }
             }
         }
     }
@@ -116,7 +135,7 @@ public abstract class FoodDataMixin implements FoodHashAccessor {
     }
     @Inject(at = @At(value = "HEAD"), method = "needsFood", cancellable = true)
     public void onNeedsFood(CallbackInfoReturnable<Boolean> info) {
-        info.setReturnValue(true);
+        info.setReturnValue(this.foodLevel<20 || Config.foodEatableAnyway);
     }
     @Inject(at = @At(value = "HEAD"), method = "tick(Lnet/minecraft/world/entity/player/Player;)V", cancellable = true)
     private void injected(Player p_38711_, CallbackInfo info){
@@ -156,8 +175,13 @@ public abstract class FoodDataMixin implements FoodHashAccessor {
                 ++this.tickTimer;
                 if (this.tickTimer >= Math.round(60.0F * modifier)) {
                     p_38711_.heal(1.0F);
-                    this.foodLevel = Math.max(this.foodLevel - 1, 0);
-                    this.tickTimer = 0;
+                    if (!Config.regenHungerOnly && this.saturationLevel > 0.0F) {
+                        this.saturationLevel = Math.max(this.saturationLevel - 1.0F, 0.0F);
+                    }
+                    else {
+                        this.foodLevel = Math.max(this.foodLevel - 1, 0);
+                        this.tickTimer = 0;
+                    }
                 }
             } else if (this.foodLevel <= 0) {
                 ++this.tickTimer;

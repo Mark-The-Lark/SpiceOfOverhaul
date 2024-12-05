@@ -5,6 +5,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import ru.markthelark.spiceofoverhaul.Config;
 import ru.markthelark.spiceofoverhaul.util.FoodHashAccessor;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
@@ -24,28 +25,11 @@ import static squeek.appleskin.helpers.FoodHelper.isFood;
 
 @Mixin(FoodHelper.class)
 public class FoodHelperMixin {
-    @Inject(method = "getModifiedFoodValues(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/player/Player;)Lsqueek/appleskin/api/food/FoodValues;", at = @At(value = "HEAD"), remap = false, cancellable = true)
-    private static void getModifiedFoodValues(ItemStack itemStack, Player player, CallbackInfoReturnable<FoodValues> info) {
-        FoodData foodData = player.getFoodData();
-        int eaten = 0;
-        if (foodData instanceof FoodHashAccessor) {
-            HashMap<String, Integer> foodHash = ((FoodHashAccessor) foodData).getFoodHash();
-            LinkedList<String> foodQueue = ((FoodHashAccessor) foodData).getFoodQueue();
-            String  itemString = (itemStack.getItem().getCreatorModId(itemStack) + ":" + itemStack.getItem().toString().replace(" ",""));
-            if (foodQueue.contains(itemString)) {
-                eaten = foodHash.get(itemString);
-            }
-        }
-        FoodProperties itemFood = itemStack.getItem().getFoodProperties(itemStack, player);
-        int hunger = itemFood != null ? itemFood.getNutrition() : 0;
-        float saturationModifier = itemFood != null ? itemFood.getSaturationModifier() : 0;
 
-        info.setReturnValue(new FoodValues((int)(hunger * Math.pow(0.7,eaten)), saturationModifier));
-    }
     @Inject(method = "getEstimatedHealthIncrement(Lnet/minecraft/world/item/ItemStack;Lsqueek/appleskin/api/food/FoodValues;Lnet/minecraft/world/entity/player/Player;)F", at = @At(value = "HEAD"), remap = false, cancellable = true)
     private static void getEstimatedHealthIncrement(ItemStack itemStack, FoodValues modifiedFoodValues, Player player, CallbackInfoReturnable<Float> cir)
     {
-        if (!isFood(itemStack, player))
+        if (!isFood(itemStack, player) || !Config.regenHungerOnly)
             return;
 
         if (!player.isHurt())
