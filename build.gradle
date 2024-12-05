@@ -15,7 +15,6 @@ base {
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
     // The mappings can be changed at any time and must be in the following format.
@@ -149,6 +148,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     //Mixin
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    implementation group: 'org.openjdk.nashorn', name: 'nashorn-core', version: '15.4'
     implementation fg.deobf("squeek.appleskin:appleskin-forge:mc1.20.1-2.5.1")
     runtimeOnly fg.deobf("squeek.appleskin:appleskin-forge:mc1.20.1-2.5.1")
     implementation fg.deobf("curse.maven:farmers-delight-398521:5051242")

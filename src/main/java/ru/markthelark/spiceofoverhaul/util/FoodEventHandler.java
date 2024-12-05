@@ -18,6 +18,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 import ru.markthelark.spiceofoverhaul.Config;
+import ru.markthelark.spiceofoverhaul.items.FoodBag;
 
 public class FoodEventHandler {
 
@@ -46,7 +47,9 @@ public class FoodEventHandler {
             player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 19, difficultyScale, false, false, false));
             player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 19, difficultyScale, false, false, false));
             player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 19, difficultyScale-2, false, false, false));
-            player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 79, 0, false, false, false));
+            if (Config.strikesNausea) {
+                player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 79, 0, false, false, false));
+            }
         }
         else if ((hunger <= Config.hungerLevel-3 && Config.lowHungerStrikes) || (healthPercent <= Config.healthLevel-0.15f && Config.lowHealthStrikes) || (saturation >= Config.saturationLevel+3f && Config.highSaturationStrikes)){
             player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 19, difficultyScale-1, false, false, false));
@@ -70,7 +73,7 @@ public class FoodEventHandler {
     @SubscribeEvent
     public static void onFoodStartEating(LivingEntityUseItemEvent.Start event)
     {
-        if (Config.modifyFoodEatingSpeed && event.getItem().getItem().isEdible()) {
+        if (Config.modifyFoodEatingSpeed && (event.getItem().getItem().isEdible() || event.getItem().getItem() instanceof FoodBag)) {
             int hunger = event.getItem().getFoodProperties(event.getEntity()).getNutrition();
             event.setDuration(hunger * 6 + 8);
         }
