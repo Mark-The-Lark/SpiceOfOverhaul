@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import ru.markthelark.spiceofoverhaul.Config;
 import ru.markthelark.spiceofoverhaul.util.FoodHashAccessor;
+import ru.markthelark.spiceofoverhaul.util.FormulaProvider;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -42,11 +43,11 @@ public class CakeBlockMixin {
                 foodHash.put(blockString, 0);
             }
             int eaten = foodHash.get(blockString);
-            if ((int)(2 * Math.pow(0.7,eaten))<=0 && !Config.cakeEatableAnyway){
+            if ((int)(2 * Math.pow(0.7,eaten))<=0 && !Config.foodEatableAnyway){
                 cir.setReturnValue(InteractionResult.PASS);
             }
             else {
-                foodData.eat((int)(2 * Math.pow(0.7,eaten)), 0.1F);
+                foodData.eat(FormulaProvider.FormulaHunger(2,0.1F, eaten),FormulaProvider.FormulaSaturation(2,0.1F, eaten));
                 if (foodQueue.size() >= ((FoodHashAccessor)foodData).getFoodHistory()) {
                     String elem = foodQueue.pollFirst();
                     foodHash.put(elem, foodHash.get(elem) - 1);

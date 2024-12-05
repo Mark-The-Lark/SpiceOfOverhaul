@@ -26,8 +26,7 @@ public class MessageQueueSync
 
     public static MessageQueueSync decode(FriendlyByteBuf buf)
     {
-        String msg = buf.readUtf();
-        return new MessageQueueSync(msg);
+        return new MessageQueueSync(buf.readUtf());
     }
 
     public static void handle(final MessageQueueSync message, Supplier<NetworkEvent.Context> ctx)

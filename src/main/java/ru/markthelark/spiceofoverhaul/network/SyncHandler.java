@@ -1,5 +1,7 @@
 package ru.markthelark.spiceofoverhaul.network;
 
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import ru.markthelark.spiceofoverhaul.SpiceOfOverhaul;
 import ru.markthelark.spiceofoverhaul.util.FoodHashAccessor;
 import net.minecraft.resources.ResourceLocation;
@@ -29,7 +31,7 @@ public class SyncHandler
     }
 
     @SubscribeEvent
-    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
+    public void onPlayerLoggedIn(LivingEntityUseItemEvent.Start event)
     {
         if (!(event.getEntity() instanceof ServerPlayer))
             return;

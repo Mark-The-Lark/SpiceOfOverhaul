@@ -1,0 +1,6 @@
+{
+    "parent": "spiceofoverhaul:item/paper_bag",
+    "textures": {
+        "layer0": "spiceofoverhaul:item/paper_bag_filled"
+    }
+}

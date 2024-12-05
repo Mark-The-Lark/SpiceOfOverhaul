@@ -1,0 +1,6 @@
+{
+    "parent": "spiceofoverhaul:item/lunch_box",
+    "textures": {
+        "layer0": "spiceofoverhaul:item/lunch_box_filled"
+    }
+}
