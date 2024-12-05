@@ -19,6 +19,16 @@ public class Config
     private static final ForgeConfigSpec.ConfigValue<Integer> HISTORY_LENGTH = BUILDER
             .comment("Number of eaten foods that will affect food values of next item eaten")
             .defineInRange("historyLength", 20, 1, 1000);
+    private static final ForgeConfigSpec.ConfigValue<String> HUNGER_FORMULA = BUILDER
+            .comment("You can change hunger formula dependence on circumstances")
+            .comment("Use JavaScript Math module functions for mathematical functions")
+            .comment("Possible inputs: HUNGER, EATEN, SATURATION")
+            .define("hunger", "HUNGER*Math.pow(0.7,EATEN)");
+    private static final ForgeConfigSpec.ConfigValue<String> SATURATION_FORMULA = BUILDER
+            .comment("You can change saturation formula dependence on circumstances")
+            .comment("Use JavaScript Math module functions for mathematical functions")
+            .comment("Possible inputs: HUNGER, EATEN, SATURATION")
+            .define("saturation", "SATURATION");
     private static final ForgeConfigSpec.ConfigValue<Boolean> IDLE_EXHAUSTION = BUILDER
             .comment("Configured number of exhaustion will be applied constantly")
             .define("idleExhaustion", true);
@@ -53,6 +63,9 @@ public class Config
     private static final ForgeConfigSpec.ConfigValue<Boolean> STRIKES_JUMP = BUILDER
             .comment("You cannot jump when having extreme strikes")
             .define("strikesJump", true);
+    private static final ForgeConfigSpec.ConfigValue<Boolean> STRIKES_NAUSEA = BUILDER
+            .comment("If Nausea effect should be applied")
+            .define("strikesNausea", true);
     private static final ForgeConfigSpec.ConfigValue<Integer> STRIKES_DIFFICULTY_BASE = BUILDER
             .comment("This value is equal to highest effect amplifier when you have 1 hp/hunger")
             .defineInRange("strikesDifficultyBase", 1, 0, 10);
@@ -61,18 +74,25 @@ public class Config
             .defineInRange("strikesDifficultyScale", 1, 0, 10);
 
     private static final ForgeConfigSpec.ConfigValue<Boolean> REGEN_REWORK = BUILDER
-            .comment("Regeneration only requires hunger, not saturation")
+            .comment("Regeneration rate depends on certain circumstances")
             .define("regenRework", true);
+    private static final ForgeConfigSpec.ConfigValue<Boolean> REGEN_HUNGER_ONLY = BUILDER
+            .comment("Regeneration only requires hunger, not saturation")
+            .define("regenHungerOnly", true);
     private static final ForgeConfigSpec.ConfigValue<Boolean> ENABLE_WELLFED = BUILDER
             .comment("Enable effect which increases regeneration rate")
             .define("enableWellFed", true);
-    private static final ForgeConfigSpec.ConfigValue<Boolean> CAKE_EATABLE_ANYWAY = BUILDER
+    private static final ForgeConfigSpec.ConfigValue<Boolean> FOOD_EATABLE_ANYWAY = BUILDER
             .comment("Makes cake eatable even if it does not give any hunger")
             .define("cakeEatableAnyway", false);
+
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static boolean enableSOLModule;
+    public static int historyLength;
+    public static String hungerExpression;
+    public static String saturationExpression;
     public static boolean idleExhaustion;
     public static boolean modifyFoodEatingSpeed;
     public static float idleExhaustionQuantity;
@@ -84,24 +104,24 @@ public class Config
     public static boolean highSaturationStrikes;
     public static float saturationLevel;
     public static boolean strikesJump;
+    public static boolean strikesNausea;
     public static boolean regenRework;
+    public static boolean regenHungerOnly;
     public static boolean enableWellFed;
-    public static boolean cakeEatableAnyway;
-    public static int historyLength;
+    public static boolean foodEatableAnyway;
+
     public static int strikesDifficultyBase;
     public static int StrikesDifficultyScale;
-//    public static String magicExpression;
 
-//    private static boolean validateItemName(final Object obj)
-//    {
-//        return obj instanceof final String itemName && ForgeRegistries.ITEMS.containsKey(new ResourceLocation(itemName));
-//    }
+
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event)
     {
         enableSOLModule = ENABLE_SOL_MODULE.get();
         historyLength = HISTORY_LENGTH.get();
+        hungerExpression = HUNGER_FORMULA.get();
+        saturationExpression = SATURATION_FORMULA.get();
 
         idleExhaustion = IDLE_EXHAUSTION.get();
         idleExhaustionQuantity = IDLE_EXHAUSTION_QUANTITY.get().floatValue();
@@ -117,12 +137,14 @@ public class Config
         saturationLevel = SATURATION_LEVEL.get().floatValue();
 
         strikesJump = STRIKES_JUMP.get();
+        strikesNausea = STRIKES_NAUSEA.get();
         strikesDifficultyBase = STRIKES_DIFFICULTY_BASE.get();
         StrikesDifficultyScale = STRIKES_DIFFICULTY_SCALE.get();
 
         regenRework = REGEN_REWORK.get();
+        regenHungerOnly = REGEN_HUNGER_ONLY.get();
         enableWellFed = ENABLE_WELLFED.get();
-        cakeEatableAnyway = CAKE_EATABLE_ANYWAY.get();
+        foodEatableAnyway = FOOD_EATABLE_ANYWAY.get();
 
     }
 }
