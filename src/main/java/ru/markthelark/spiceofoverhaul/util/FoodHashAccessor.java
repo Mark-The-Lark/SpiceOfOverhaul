@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public interface FoodHashAccessor {
-
+    boolean isUpdated();
+    void setNotUpdated();
     HashMap<String, Integer> getFoodHash();
     LinkedList<String> getFoodQueue();
     String getFoodQueueString();

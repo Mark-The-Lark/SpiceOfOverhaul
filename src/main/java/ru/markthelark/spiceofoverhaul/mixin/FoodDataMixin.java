@@ -33,6 +33,13 @@ public abstract class FoodDataMixin implements FoodHashAccessor {
     @Shadow private float saturationLevel;
     @Shadow private int tickTimer;
 
+    @Unique public boolean updated = false;
+    @Unique public boolean isUpdated() {
+        return updated;
+    }
+    @Unique public void setNotUpdated(){
+        updated = false;
+    }
     @Unique public final int historyLength = Config.historyLength;
     @Unique private LinkedList<String> foodQueue = new LinkedList<>();
     @Unique public HashMap<String,Integer> foodHash = new HashMap<>();
@@ -54,6 +61,7 @@ public abstract class FoodDataMixin implements FoodHashAccessor {
     public void eat(Item item, ItemStack itemStack, LivingEntity entity){
         if (Config.enableSOLModule) {
             if (item.isEdible()) {
+                updated = true;
                 FoodProperties foodproperties = itemStack.getFoodProperties(entity);
                 String itemString = (itemStack.getItem().getCreatorModId(itemStack) + ":" + itemStack.getItem().toString().replace(" ", ""));
                 if (!this.foodQueue.contains(itemString)) {
@@ -87,6 +95,7 @@ public abstract class FoodDataMixin implements FoodHashAccessor {
         }
         else {
             if (item.isEdible()) {
+                updated = true;
                 FoodProperties foodproperties = itemStack.getFoodProperties(entity);
                 this.eat(foodproperties.getNutrition(), foodproperties.getSaturationModifier());
                 if (Config.enableWellFed) {
